@@ -4,12 +4,16 @@
     "kasumi::config.connection": "webhook",
     "kasumi::config.webhookVerifyToken": "",
     "kasumi::config.webhookEncryptKey": "",
-    "kasumi::config.webhookPort": 11451,
+    "kasumi::config.webhookPort": 10000,
 
     "kasumi::middleware.accessControl.userGroup.enable": true,
 
     "kasumi::config.database": "mongodb",
-    "kasumi::config.mongoConnectionString": "mongodb://localhost:27017",
+    "kasumi::config.mongoConnectionString": "mongodb://127.0.0.1:27017",
     "kasumi::config.mongoDatabaseName": "kasumi",
-    "kasumi::config.mongoCollectionName": "template",
+    "kasumi::config.mongoCollectionName": "gitnya",
+
+    "gitnya::express.port": 10001,
+    "gitnya::webhooks.key": "kasumi-gitnya",
+    "gitnya::webhooks.host": "https://gitnya.your.host.name",
 }
