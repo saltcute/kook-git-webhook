@@ -1,1 +1,9 @@
-export const IV = Buffer.from("m)eh,k!PyY%p'yb*".padEnd(16), 'utf-8');
+import crypto from 'crypto';
+
+/**
+ * @deprecated
+ */
+export const IV = "m)eh,k!PyY%p'yb*";
+export function getIV() {
+    return crypto.randomBytes(16);
+} 

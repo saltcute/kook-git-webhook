@@ -12,11 +12,8 @@ export interface CustomStorage {
 
     [key: `gitnya::webhooks.channel.mappings.${string}`]: {
         channelId: string,
-        secret: string
+        secret: string,
+        iv: string,
+        repo?: string
     } | undefined,
-
-    /**
-     * Secret -> UUID
-     */
-    [key: `gitnya::webhooks.channel.secrets.${string}`]: string | undefined
 }
