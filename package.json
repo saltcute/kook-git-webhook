@@ -23,9 +23,15 @@
   },
   "homepage": "https://github.com/hexona69/kasumi-template#readme",
   "dependencies": {
+    "@octokit/webhooks": "^13.2.7",
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
     "kasumi.js": "^0.6.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
     "upath": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21"
   }
 }
