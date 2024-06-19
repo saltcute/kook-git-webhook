@@ -20,10 +20,10 @@ class AppCommand extends BaseCommand<Kasumi<CustomStorage>> {
         const IV = getIV();
         const secret = crypto.createCipheriv('aes-256-gcm', (await this.client.config.getOne('gitnya::webhooks.key')).padEnd(32), IV).update(`${guildId}/${channelId}`, 'utf8').toString('base64');
 
-        const hash = crypto.createHash('md5').update(secret).digest('base64url');
         const UUID = crypto.createHash('md5').update(channelId).digest('base64url');
         let body = await this.client.config.getOne(`gitnya::webhooks.channel.mappings.${UUID}`);
         if (body) {
+            const hash = crypto.createHash('md5').update(body.secret).digest('base64url');
             await session.reply('这个频道好像已经绑定过 WebHook了！');
             return session.reply(new Card()
                 .addTitle("请像这样子添加 WebHook 喵!")
@@ -37,7 +37,7 @@ ${new URL(`/${hash}`, await this.client.config.getOne('gitnya::webhooks.host')).
 Content Type: application/json
 Secret:
 \`\`\`plain
-${secret}
+${body.secret}
 \`\`\``).addText('点击 Add webhook 完成绑定喵！'));
         }
         const list = await this.client.config.getOne('gitnya::webhooks.channel.list') || [];
@@ -49,6 +49,7 @@ ${secret}
         });
         this.client.config.set('gitnya::webhooks.channel.list', list);
 
+        const hash = crypto.createHash('md5').update(secret).digest('base64url');
         addWebhooks(secret, hash, channelId);
 
         await session.reply(new Card()
