@@ -7,11 +7,11 @@ import { addWebhooks } from "api";
 import { getIV, IV } from "menu/gitnya/lib";
 
 (async () => {
-    let list = await client.config.getOne('gitnya::webhooks.channel.list') || [];
+    const list = await client.config.getOne('gitnya::webhooks.channel.list') || [];
+    const newList = [];
     for (const UUID of list) {
         const store = await client.config.getOne(`gitnya::webhooks.channel.mappings.${UUID}`);
         if (!store) {
-            list = list.filter(v => v !== UUID);
             continue;
         }
         let { channelId, secret, iv, repo } = store;
@@ -32,16 +32,16 @@ import { getIV, IV } from "menu/gitnya/lib";
                 channelId, repo, secret,
                 iv: iv.toString('base64')
             });
-            list = list.filter(v => v !== UUID);
-            list.push(newId);
+            newList.push(newId);
 
             client.logger.warn(`Found legacy storage: ${decrypted}. Converted to new style.`);
-            continue;
+        } else {
+            newList.push(UUID);
         }
         const hash = crypto.createHash('md5').update(secret).digest('base64url');
         addWebhooks(secret, hash, channelId);
     }
-    client.config.set('gitnya::webhooks.channel.list', list);
+    client.config.set('gitnya::webhooks.channel.list', newList);
 
     await client.connect()
     const basicPath = upath.join(__dirname, 'menu');
