@@ -18,6 +18,17 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
     const { Webhooks, createNodeMiddleware } = await import("@octokit/webhooks");
     const webhooks = new Webhooks({ secret });
 
+    webhooks.on("ping", async ({ id, name, payload }) => {
+        if (markDelete[hash]) return;
+        const card = new Card();
+        if (payload.repository) {
+            card.addTitle("喵喵！")
+                .addDivider();
+            card.addText(`收到了来自 \`${payload.repository.full_name}'\` 的 ping 事件喵！`);
+            await client.API.message.create(MessageType.CardMessage, channelId, card);
+        }
+    });
+
     webhooks.on("push", async ({ id, name, payload }) => {
         if (markDelete[hash]) return;
         function getBranchName() {
