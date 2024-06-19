@@ -25,12 +25,10 @@ import { getIV, IV } from "menu/gitnya/lib";
             client.config.set(`gitnya::webhooks.channel.mappings.${UUID}`, undefined);
             client.config.set(`gitnya::webhooks.channel.secrets.${secret}`, undefined);
 
-            const iv = getIV();
-            secret = crypto.createCipheriv('aes-256-gcm', (await client.config.getOne('gitnya::webhooks.key')).padEnd(32), iv).update(decrypted, 'utf8').toString('base64');
             const newId = crypto.createHash('md5').update(channelId).digest('base64url');
             client.config.set(`gitnya::webhooks.channel.mappings.${newId}`, {
                 channelId, repo, secret,
-                iv: iv.toString('base64')
+                iv: Buffer.from(IV).toString('base64')
             });
             newList.push(newId);
 
