@@ -69,10 +69,8 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
                 }
             })
         }
-        if (!payload.after.startsWith("0000000") && !payload.before.startsWith("0000000")) {
-            card.addContext(`正在显示 ${payload.commits.length > 20 ? 20 : payload.commits.length} 共 ${payload.commits.length} 个 commit | [查看总共 ${payload.commits.length} 个变动](${payload.compare})`);
-        }
         if (payload.commits.length > 0) {
+            card.addContext(`正在显示 ${payload.commits.length > 20 ? 20 : payload.commits.length} 共 ${payload.commits.length} 个 commit | [查看总共 ${payload.commits.length} 个变动](${payload.compare})`);
             let lastCommit = payload.before;
             let text = "";
             for (let i = 0; i < payload.commits.length && i < 20; i++) {
