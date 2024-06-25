@@ -45,8 +45,7 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
         } else if (payload.after.startsWith("0000000")) { // Deleting a branch
             card.addContext(`删除分支 [${getBranchName()}](${getBranchURL()})`);
         } else {
-            card.addContext(`${payload.head_commit ? `${payload.head_commit?.timestamp} 时` : ""}对 [${getBranchName()}](${getBranchURL()}) 的 ${payload.commits.length} 个 commit`)
-            card.addContext(`[查看共 ${payload.commits.length} 个变动](${payload.compare})`);
+            card.addContext(`${payload.head_commit ? `${new Date(payload.head_commit?.timestamp).toLocaleString("zh-CN")} 时` : ""}对 [${getBranchName()}](${getBranchURL()}) 的 ${payload.commits.length} 个 commit`)
         }
 
         if (payload.sender) {
@@ -70,16 +69,26 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
                 }
             })
         }
+        if (!payload.after.startsWith("0000000") && !payload.before.startsWith("0000000")) {
+            card.addContext(`正在显示 ${payload.commits.length > 20 ? 20 : payload.commits.length} 共 ${payload.commits.length} 个 commit | [查看总共 ${payload.commits.length} 个变动](${payload.compare})`);
+        }
         if (payload.commits.length > 0) {
             let lastCommit = payload.before;
-            for (const commit of payload.commits) {
-                card.addDivider();
-                card.addContext(`[${lastCommit.substring(0, 7)} -> ${commit.id.substring(0, 7)}](https://github.com/saltcute/playground/compare/${lastCommit.substring(0, 7)}...${commit.id.substring(0, 7)})`);
-                card.addText(`**${commit.author.name}**\n - ${commit.message}`);
+            let text = "";
+            for (let i = 0; i < payload.commits.length && i < 20; i++) {
+                const commit = payload.commits[i];
+                card.addContext(`[${lastCommit.substring(0, 7)} -> ${commit.id.substring(0, 7)}](https://github.com/saltcute/playground/compare/${lastCommit.substring(0, 7)}...${commit.id.substring(0, 7)})`)
+                    .addText(`**${commit.author.name}**
+${commit.message.split("/n").map(v => `- ${v.length > 50 ? v.substring(0, 50) + "..." : v}`).join("\n")}
+---
+`);
                 lastCommit = commit.id;
             }
         }
-        await client.API.message.create(MessageType.CardMessage, channelId, card);
+        const { err } = await client.API.message.create(MessageType.CardMessage, channelId, card);
+        if (err) {
+            client.logger.error("Error sending push event card", err);
+        }
     });
 
     const middleware = createNodeMiddleware(webhooks, { path: `/${hash}` });
