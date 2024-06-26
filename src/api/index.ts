@@ -32,18 +32,28 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
     webhooks.on("push", async ({ id, name, payload }) => {
         if (markDelete[hash]) return;
         function getBranchName() {
-            return payload.ref.replace("refs/heads/", "");
+            return payload.ref.replace("refs/heads/", "").replace("refs/tags/", "").replace("refs/remotes/", "");
         }
         function getBranchURL() {
             return `https://github.com/${payload.repository.full_name}/tree/${getBranchName()}`;
+        }
+        function getBranchTypeString() {
+            if (payload.ref.startsWith("refs/heads/")) {
+                return "分支";
+            } else if (payload.ref.startsWith("refs/tags/")) {
+                return "标签";
+            } else if (payload.ref.startsWith("refs/remotes/")) {
+                return "远程分支";
+            }
+            return
         }
 
         const card = new Card();
         card.addTitle(`${payload.repository.full_name} 上有新的 Push 事件`);
         if (payload.before.startsWith("0000000")) { // Creating a new branch
-            card.addContext(`创建分支 [${getBranchName()}](${getBranchURL()})`);
+            card.addContext(`创建${getBranchTypeString()} [${getBranchName()}](${getBranchURL()})`);
         } else if (payload.after.startsWith("0000000")) { // Deleting a branch
-            card.addContext(`删除分支 [${getBranchName()}](${getBranchURL()})`);
+            card.addContext(`删除${getBranchTypeString()} [${getBranchName()}](${getBranchURL()})`);
         } else {
             card.addContext(`${payload.head_commit ? `${new Date(payload.head_commit?.timestamp).toLocaleString("zh-CN")} 时` : ""}对 [${getBranchName()}](${getBranchURL()}) 的 ${payload.commits.length} 个 commit`)
         }
