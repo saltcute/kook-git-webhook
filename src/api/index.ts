@@ -55,7 +55,7 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
         } else if (payload.after.startsWith("0000000")) { // Deleting a branch
             card.addContext(`删除${getBranchTypeString()} [${getBranchName()}](${getBranchURL()})`);
         } else {
-            card.addContext(`${payload.head_commit ? `${new Date(payload.head_commit?.timestamp).toLocaleString("zh-CN")} 时` : ""}对 [${getBranchName()}](${getBranchURL()}) 的 ${payload.commits.length} 个 commit`)
+            card.addContext(`${payload.head_commit ? `${new Date(payload.head_commit?.timestamp).toLocaleString("zh-CN").replaceAll(":", "\\:")} 时` : ""}对 [${getBranchName()}](${getBranchURL()}) 的 ${payload.commits.length} 个 commit`)
         }
 
         if (payload.sender) {
