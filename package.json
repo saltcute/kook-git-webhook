@@ -1,6 +1,6 @@
 {
   "name": "kook-git-webhook",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Template for Kasumi",
   "main": "index.js",
   "scripts": {
