@@ -1,3 +1,3 @@
-import { client } from "init/client";
+import { client } from "init/client"
 
-client.on('message.text', (event) => { });
+client.on("message.text", (event) => {})

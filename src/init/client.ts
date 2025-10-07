@@ -1,4 +1,4 @@
-import Kasumi from 'kasumi.js';
-import { CustomStorage } from './type';
+import Kasumi from "kasumi.js"
+import { CustomStorage } from "./type"
 
-export const client: Kasumi<CustomStorage> = new Kasumi();
+export const client: Kasumi<CustomStorage> = new Kasumi()
