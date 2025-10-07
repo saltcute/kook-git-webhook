@@ -85,7 +85,7 @@ export async function addWebhooks(secret: string, hash: string, channelId: strin
             let text = "";
             for (let i = 0; i < payload.commits.length && i < 20; i++) {
                 const commit = payload.commits[i];
-                card.addContext(`[${lastCommit.substring(0, 7)} -> ${commit.id.substring(0, 7)}](https://github.com/saltcute/playground/compare/${lastCommit.substring(0, 7)}...${commit.id.substring(0, 7)})`)
+                card.addContext(`[${lastCommit.substring(0, 7)} -> ${commit.id.substring(0, 7)}](https://github.com/${payload.repository.full_name}/compare/${lastCommit.substring(0, 7)}...${commit.id.substring(0, 7)})`)
                     .addText(`**${commit.author.name}**
 ${commit.message.split("/n").map(v => `- ${v.length > 50 ? v.substring(0, 50) + "..." : v}`).join("\n")}
 ---
